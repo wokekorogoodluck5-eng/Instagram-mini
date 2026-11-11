@@ -1,178 +1,188 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>InstaGram Mini</title>
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-* { box-sizing:border-box; }
-body {
-  margin:0;
-  font-family:Arial,sans-serif;
-  background:#fff;
-  color:#111;
-}
-header {
-  height:55px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 15px;
-  border-bottom:1px solid #eee;
-  font-size:24px;
-}
-.logo {
-  font-family:cursive;
-  font-weight:bold;
-}
-.stories {
-  display:flex;
-  overflow-x:auto;
-  padding:14px 8px;
-  gap:13px;
-  border-bottom:1px solid #eee;
-}
-.story {
-  min-width:65px;
-  text-align:center;
-  font-size:11px;
-}
-.story img {
-  width:62px;
-  height:62px;
-  border-radius:50%;
-  object-fit:cover;
-  padding:3px;
-  border:2px solid #e1306c;
-}
-.post-head {
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px;
-}
-.post-head img {
-  width:35px;
-  height:35px;
-  border-radius:50%;
-}
-.post-photo {
-  width:100%;
-  height:330px;
-  object-fit:cover;
-}
-.actions {
-  display:flex;
-  gap:17px;
-  padding:12px;
-  font-size:25px;
-}
-.actions span { cursor:pointer; }
-.caption { padding:0 12px 15px; font-size:14px; }
-.bottom {
-  position:fixed;
-  bottom:0;
-  background:white;
-  border-top:1px solid #eee;
-  width:100%;
-  display:flex;
-  justify-content:space-around;
-  padding:14px 0;
-  font-size:24px;
-}
-main { padding-bottom:65px; }
+*{box-sizing:border-box}
+body{margin:0;background:#fafafa;color:#111;font-family:Arial,sans-serif}
+header{background:white;padding:16px;border-bottom:1px solid #ddd;font-size:25px;font-weight:bold;font-family:cursive}
+.container{max-width:420px;margin:45px auto;padding:25px;background:white;border:1px solid #ddd;text-align:center}
+h2{font-family:cursive;font-size:30px}
+input{width:100%;padding:13px;margin:7px 0;border:1px solid #ddd;border-radius:5px;background:#fafafa}
+button{width:100%;padding:12px;margin-top:10px;background:#0095f6;color:white;border:0;border-radius:5px;font-weight:bold}
+.secondary{background:#333}
+.hidden{display:none}
+#message{font-size:13px;color:#d00;margin:12px}
+#profile{padding:25px;text-align:center}
+.avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;background:#eee}
 </style>
 </head>
 <body>
+<header>InstaGram Mini</header>
 
-<header>
-  <span class="logo">InstaGram Mini</span>
-  <span>♡　✉</span>
-</header>
+<div class="container" id="auth">
+  <h2>InstaGram Mini</h2>
+  <p>Sign up to see photos and videos from your friends.</p>
 
-<div class="stories">
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150">
-    <p>Your story</p>
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150">
-    <p>Alex</p>
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=150">
-    <p>Sarah</p>
-  </div>
-  <div class="story">
-    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=150">
-    <p>David</p>
-  </div>
+  <input id="fullname" placeholder="Full name">
+  <input id="username" placeholder="Username">
+  <input id="email" type="email" placeholder="Email address">
+  <input id="password" type="password" placeholder="Password (minimum 6 characters)">
+
+  <button onclick="signup()">Create Account</button>
+  <button class="secondary" onclick="login()">Log In</button>
+  <div id="message"></div>
 </div>
 
-<main id="feed">
-  <div class="post">
-    <div class="post-head">
-      <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100">
-      <b>@alex_official</b>
-    </div>
-    <img class="post-photo"
-      src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=800">
-    <div class="actions">
-      <span onclick="like(this)">♡</span>
-      <span onclick="alert('Comments coming soon!')">♡</span>
-      <span onclick="alert('Share coming soon!')">➤</span>
-      <span style="margin-left:auto">♧</span>
-    </div>
-    <div class="caption">
-      <b>1,245 likes</b>
-      <p><b>@alex_official</b> Enjoying life one day at a time ✨</p>
-      <small>View all 28 comments</small>
-    </div>
-  </div>
-
-  <div class="post">
-    <div class="post-head">
-      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100">
-      <b>@sarah_style</b>
-    </div>
-    <img class="post-photo"
-      src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=800">
-    <div class="actions">
-      <span onclick="like(this)">♡</span>
-      <span>♡</span>
-      <span>➤</span>
-      <span style="margin-left:auto">♧</span>
-    </div>
-    <div class="caption">
-      <b>856 likes</b>
-      <p><b>@sarah_style</b> New day, new energy ❤️</p>
-    </div>
-  </div>
-</main>
-
-<nav class="bottom">
-  <span onclick="showTab('Home')">⌂</span>
-  <span onclick="showTab('Explore')">⌕</span>
-  <span onclick="showTab('Create')">⊕</span>
-  <span onclick="showTab('Reels')">▣</span>
-  <span onclick="showTab('Profile')">◉</span>
-</nav>
+<div id="profile" class="hidden">
+  <img class="avatar" id="avatar" alt="Profile picture">
+  <h2 id="welcome">Welcome!</h2>
+  <p id="userhandle"></p>
+  <p>Your InstaGram Mini account is active.</p>
+  <button onclick="logout()">Log Out</button>
+</div>
 
 <script>
-const tg = window.Telegram?.WebApp;
-tg?.ready();
-tg?.expand();
+const SUPABASE_URL =
+'https://bcavalrihbazfcjyccsg.supabase.co';
 
-function like(el) {
-  el.textContent = el.textContent === '♡' ? '♥' : '♡';
-  el.style.color = el.textContent === '♥' ? 'red' : 'black';
+const SUPABASE_KEY =
+'sb_publishable_7bJSW_IrTA1GalGR7E9Bzw_O2VzrAvQ';
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+const $ = id => document.getElementById(id);
+
+function message(text) {
+  $('message').textContent = text;
 }
 
-function showTab(tab) {
-  alert(tab + ' section is coming soon!');
+async function signup() {
+  const fullname = $('fullname').value.trim();
+  const username = $('username').value.trim().toLowerCase();
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if (!fullname || !username || !email || !password) {
+    message('Please fill in all fields.');
+    return;
+  }
+
+  if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
+    message('Username must be 3–20 characters.');
+    return;
+  }
+
+  if (password.length < 6) {
+    message('Password must have at least 6 characters.');
+    return;
+  }
+
+  message('Creating your account...');
+
+  const {data,error} = await db.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        username,
+        full_name: fullname
+      }
+    }
+  });
+
+  if (error) {
+    message(error.message);
+    return;
+  }
+
+  if (data.session) {
+    await showProfile(data.session.user);
+  } else {
+    message('Account created! Check your email to confirm, then log in.');
+  }
 }
+
+async function login() {
+  const email = $('email').value.trim();
+  const password = $('password').value;
+
+  if (!email || !password) {
+    message('Enter your email and password.');
+    return;
+  }
+
+  message('Logging in...');
+
+  const {data,error} = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if (error) {
+    message(error.message);
+    return;
+  }
+
+  await showProfile(data.user);
+}
+
+async function showProfile(user) {
+  const {data:profile,error} = await db
+    .from('profiles')
+    .select('username, full_name, avatar_url')
+    .eq('id',user.id)
+    .single();
+
+  if (error) {
+    message('Logged in, but profile could not load: '+error.message);
+    return;
+  }
+
+  $('auth').classList.add('hidden');
+  $('profile').classList.remove('hidden');
+  $('welcome').textContent = profile.full_name || 'Welcome!';
+  $('userhandle').textContent = '@'+profile.username;
+
+  $('avatar').src = profile.avatar_url ||
+    'https://placehold.co/100x100?text=User';
+}
+
+async function logout() {
+  await db.auth.signOut();
+  $('profile').classList.add('hidden');
+  $('auth').classList.remove('hidden');
+  message('You have logged out.');
+}
+
+db.auth.onAuthStateChange((event,session) => {
+  if (event === 'SIGNED_IN' && session) {
+    setTimeout(() => showProfile(session.user),0);
+  }
+
+  if (event === 'SIGNED_OUT') {
+    $('profile').classList.add('hidden');
+    $('auth').classList.remove('hidden');
+  }
+});
+
+(async () => {
+  const {data} = await db.auth.getSession();
+  if (data.session) {
+    await showProfile(data.session.user);
+  }
+})();
+
+window.Telegram?.WebApp?.ready();
+window.Telegram?.WebApp?.expand();
 </script>
 </body>
 </html>
