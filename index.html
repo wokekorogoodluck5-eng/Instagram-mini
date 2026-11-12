@@ -63,7 +63,7 @@ input,textarea{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border
 <input id="password" type="password" placeholder="Password (6 characters minimum)">
 <button id="register">Create account</button>
 <p class="small">Already registered?</p>
-<button id="showLogin" class="secondary">Log in instead</button>
+<button id="showLogin" class="secondary" onclick="document.getElementById('signup').classList.add('hidden');document.getElementById('login').classList.remove('hidden');">Log in instead</button>
 </div>
 
 <div id="login" class="hidden">
