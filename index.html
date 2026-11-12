@@ -233,10 +233,33 @@ showLogin();
 function createPost(){
 document.getElementById("postMessage").textContent="Post feature will connect next.";
 }
-function editProfile(){
-const name=prompt("Enter your display name:");
-if(name)document.getElementById("profileUsername").textContent=name;
+
+async function editProfile(){
+  const name=prompt("Enter your full name:");
+  if(name===null)return;
+
+  const username=prompt("Enter your username:");
+  if(username===null)return;
+
+  const bio=prompt("Write your bio:");
+  if(bio===null)return;
+
+  const {error}=await db.from("profiles").update({
+    full_name:name,
+    username:username,
+    bio:bio
+  }).eq("id",currentUser.id);
+
+  if(error){
+    alert("Profile update failed: "+error.message);
+    return;
+  }
+
+  document.getElementById("profileUsername").textContent=username;
+  document.getElementById("profileBio").textContent=bio;
+  alert("Profile updated successfully!");
 }
+
 </script>
 </body>
 </html>
