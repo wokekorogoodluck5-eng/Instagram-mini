@@ -1,165 +1,279 @@
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="theme-color" content="#ffffff">
 <title>InstaGram Mini</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body <h1 style="color:red">TEST VERSION 123
-<script>
-document.body.insertAdjacentHTML('afterbegin','<h2 style="color:blue">JAVASCRIPT WORKS</h2>');
-</script></h1>{margin:0;background:#fafafa;color:#222;font-family:Arial,sans-serif}
-header{background:white;border-bottom:1px solid #ddd;padding:14px;display:flex;justify-content:space-between;align-items:center}
-header h2{font-family:cursive;margin:0}
-main{max-width:520px;margin:auto;padding:12px}
+body{margin:0;background:#fff;color:#171717;font-family:Arial,sans-serif}
 button,input,textarea{font:inherit}
-button{border:0;border-radius:7px;padding:11px;background:#0095f6;color:white;font-weight:bold;cursor:pointer}
-button:disabled{opacity:.6}
-input,textarea{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:7px}
-.panel,.post{background:white;border:1px solid #ddd;border-radius:9px;margin-bottom:15px;padding:14px}
+button{cursor:pointer}
 .hidden{display:none!important}
-.small{font-size:13px;color:#777}
-.secondary{background:#555}
-.nav{display:flex;gap:6px;margin-bottom:15px}
-.nav button{flex:1;padding:10px 5px;font-size:13px}
-.nav button.active{background:#222}
-.profile-top{display:flex;align-items:center;gap:15px;margin:15px 0}
-.avatar{width:95px;height:95px;border-radius:50%;object-fit:cover;background:#eee;border:3px solid #e1306c}
-.stats{display:flex;justify-content:space-around;flex:1;text-align:center}
-.stats strong{display:block;font-size:19px}
-.profile-actions{display:flex;gap:8px;margin:15px 0}
-.profile-actions button{flex:1;font-size:13px}
-.post-head{padding:10px;font-weight:bold}
-.post img{width:100%;max-height:550px;object-fit:contain;background:#eee;display:block}
-.post-actions{padding:10px}
-.post-actions button{width:auto}
-.caption{padding:0 10px 12px}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
-.gallery img{width:100%;aspect-ratio:1;object-fit:cover}
-.user-result{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
+button:disabled{opacity:.5}
+header{
+height:58px;position:sticky;top:0;z-index:10;
+background:#fff;border-bottom:1px solid #eee;
+display:flex;align-items:center;justify-content:space-between;
+padding:0 15px
+}
+.logo{font-size:25px;font-weight:800;letter-spacing:-1px}
+.logo span{color:#e1306c}
+.header-right{display:flex;gap:18px;align-items:center}
+.icon-btn{border:0;background:none;font-size:25px;padding:4px;color:#171717}
+main{max-width:600px;margin:auto;padding-bottom:85px}
+.page{min-height:70vh}
+#auth{padding:35px 18px}
+.auth-card{max-width:390px;margin:35px auto;border:1px solid #ddd;padding:25px;text-align:center}
+.auth-card h2{font-size:27px}
+input,textarea{
+width:100%;padding:13px;margin:7px 0;
+border:1px solid #ddd;border-radius:5px;background:#fafafa
+}
+textarea{resize:vertical;min-height:75px}
+.primary{
+background:#0095f6;color:white;border:0;border-radius:7px;
+padding:12px;font-weight:bold;width:100%
+}
+.secondary{background:#eee;color:#222;border:0;border-radius:7px;padding:10px}
+.link{background:none;border:0;color:#0095f6;font-weight:bold}
+.small{font-size:12px;color:#888}
+.message{font-size:13px;margin:12px 0;color:#d33}
+
+/* Stories / people */
+.stories{
+display:flex;gap:15px;overflow-x:auto;padding:15px;
+border-bottom:1px solid #eee;scrollbar-width:none
+}
+.stories::-webkit-scrollbar{display:none}
+.story{min-width:66px;text-align:center;font-size:11px;overflow:hidden}
+.story-ring{
+width:62px;height:62px;border-radius:50%;padding:3px;
+background:linear-gradient(45deg,#ffb000,#e1306c,#833ab4);
+margin:auto auto 5px
+}
+.story-ring img{width:100%;height:100%;border-radius:50%;object-fit:cover;border:2px solid white;background:#eee}
+.story-name{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* Feed */
+.post{border-bottom:1px solid #eee;margin-bottom:8px}
+.post-head{display:flex;align-items:center;gap:10px;padding:11px 13px}
+.post-avatar{width:36px;height:36px;border-radius:50%;object-fit:cover;background:#eee}
+.post-user{font-size:13px;font-weight:bold;flex:1}
+.post-photo{width:100%;display:block;max-height:650px;object-fit:contain;background:#f5f5f5}
+.post-actions{display:flex;align-items:center;gap:17px;padding:10px 13px}
+.action{border:0;background:none;font-size:25px;padding:0;color:#171717}
+.action.liked{color:#ed315d}
+.likes{font-weight:bold;font-size:13px;padding:0 13px}
+.post-caption{font-size:13px;line-height:1.5;padding:7px 13px 14px;overflow-wrap:anywhere}
+.post-caption strong{margin-right:5px}
+.post-date{font-size:11px;color:#999;margin-top:5px}
+.feed-empty{text-align:center;padding:55px 20px;color:#777}
+
+/* Pages */
+.page-title{font-size:22px;font-weight:bold;padding:18px 15px}
+.search-box{padding:0 15px}
+.user-list{padding:5px 15px}
+.user-result{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #eee}
 .user-result img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#eee}
-.user-info{flex:1;min-width:0}
-.user-info strong{display:block;overflow-wrap:anywhere}
-.user-result button{min-width:85px;font-size:12px}
-.following{background:#555}
+.user-info{flex:1;min-width:0;font-size:13px}
+.user-info strong{display:block;margin-bottom:4px}
+.user-info span{color:#888}
+.follow-btn{border:0;border-radius:6px;padding:9px 13px;background:#0095f6;color:white;font-weight:bold}
+.follow-btn.following{background:#eee;color:#222}
+
+/* Create */
+.create-card{padding:20px 15px}
+.preview{width:100%;max-height:350px;object-fit:contain;background:#f5f5f5;margin:10px 0}
+.file-label{display:block;border:1px dashed #aaa;border-radius:8px;padding:25px;text-align:center;margin:10px 0;color:#666}
+.file-label input{display:none}
+
+/* Profile */
+.profile-top{display:flex;align-items:center;gap:25px;padding:20px 15px}
+.profile-avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;background:#eee}
+.stats{display:flex;flex:1;justify-content:space-around;text-align:center}
+.stats strong{display:block;font-size:18px;margin-bottom:5px}
+.stats span{font-size:12px}
+.profile-details{padding:0 15px 15px;font-size:13px}
+.profile-details h3{margin:5px 0}
+.profile-buttons{display:flex;gap:8px;padding:0 15px 18px}
+.profile-buttons button{flex:1}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;background:#eee}
+.gallery-empty{padding:30px;text-align:center;color:#888;grid-column:1/4}
+
+/* Bottom navigation */
+.bottom-nav{
+position:fixed;bottom:0;left:0;right:0;height:65px;
+background:#fff;border-top:1px solid #ddd;z-index:20;
+display:flex;justify-content:space-around;align-items:center;
+padding-bottom:env(safe-area-inset-bottom)
+}
+.bottom-nav button{
+flex:1;height:100%;background:none;border:0;
+font-size:25px;color:#222
+}
+.bottom-nav button.active{color:#0095f6}
+.bottom-nav .nav-label{display:block;font-size:9px;margin-top:3px}
+.bottom-nav button.active .nav-label{font-weight:bold}
+@media(min-width:650px){
+body{background:#fafafa}
+main{background:white;border-left:1px solid #eee;border-right:1px solid #eee}
+}
 </style>
 </head>
 <body>
 
 <header>
-<h2>InstaGram Mini</h2>
-<button id="logout" class="secondary hidden">Log out</button>
+<div class="logo">InstaGram<span> Mini</span></div>
+<div class="header-right">
+<button class="icon-btn" id="refreshBtn" aria-label="Refresh">↻</button>
+<button class="icon-btn hidden" id="logoutBtn" aria-label="Log out">⋮</button>
+</div>
 </header>
 
 <main>
-<div id="auth" class="panel">
-<h3>Welcome to InstaGram Mini</h3>
+
+<!-- AUTHENTICATION -->
+<section id="auth" class="page">
+<div class="auth-card">
+<h2>InstaGram Mini</h2>
+<p class="small">Share your moments with the world.</p>
 
 <div id="signup">
-<h4>Create account</h4>
+<h3>Create account</h3>
 <input id="fullname" placeholder="Full name">
 <input id="username" placeholder="Username">
 <input id="email" type="email" placeholder="Email address">
 <input id="password" type="password" placeholder="Password (6 characters minimum)">
-<button id="register">Create account</button>
-<p class="small">Already registered?</p>
-<button id="showLogin" class="secondary" onclick="document.getElementById('signup').classList.add('hidden');document.getElementById('login').classList.remove('hidden');">Log in instead</button>
+<button class="primary" id="register">Create account</button>
+<p class="small">Already have an account?</p>
+<button class="link" id="showLogin">Log in instead</button>
 </div>
 
 <div id="login" class="hidden">
-<h4>Log in</h4>
+<h3>Welcome back</h3>
 <input id="loginEmail" type="email" placeholder="Email address">
 <input id="loginPassword" type="password" placeholder="Password">
-<button id="loginBtn">Log in</button>
-<button id="showSignup" class="secondary">Create account</button>
+<button class="primary" id="loginBtn">Log in</button>
+<p class="small">New to InstaGram Mini?</p>
+<button class="link" id="showSignup">Create account</button>
 </div>
 
-<p id="authMessage"></p>
+<p id="authMessage" class="message"></p>
 </div>
+</section>
 
+<!-- MAIN APP -->
 <section id="app" class="hidden">
-<div class="nav">
-<button id="feedTab" class="active">Home</button>
-<button id="discoverTab">Discover</button>
-<button id="profileTab">Profile</button>
-</div>
 
-<section id="homePage">
-<div class="panel">
-<h3>Create a post</h3>
-<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
-<textarea id="caption" placeholder="Write a caption..."></textarea>
-<button id="publish">Share photo</button>
-<p id="postMessage" class="small"></p>
+<!-- HOME -->
+<section id="homePage" class="page">
+<div class="stories" id="stories">
+<div class="story">
+<div class="story-ring">
+<img id="myStoryAvatar" src="https://placehold.co/100x100?text=Me">
 </div>
-<h3>Explore posts</h3>
-<div id="feed">Loading posts...</div>
+<div class="story-name">Your profile</div>
+</div>
+</div>
+<div id="feed">
+<div class="feed-empty">Loading your feed...</div>
+</div>
 </section>
 
-<section id="discoverPage" class="hidden">
-<div class="panel">
-<h3>Discover People</h3>
+<!-- SEARCH / EXPLORE -->
+<section id="discoverPage" class="page hidden">
+<div class="page-title">Explore people</div>
+<div class="search-box">
 <input id="userSearch" placeholder="Search by username..." autocomplete="off">
-<p class="small">Find people and connect with them.</p>
-<div id="searchResults">Search for people by username.</div>
+</div>
+<div class="user-list" id="searchResults">Loading people...</div>
+</section>
+
+<!-- CREATE POST -->
+<section id="createPage" class="page hidden">
+<div class="page-title">Create new post</div>
+<div class="create-card">
+<label class="file-label">
+<span>＋ Select a photo from your device</span>
+<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
+</label>
+<img id="preview" class="preview hidden" alt="Selected photo preview">
+<textarea id="caption" placeholder="Write a caption..."></textarea>
+<button class="primary" id="publish">Share photo</button>
+<p id="postMessage" class="message"></p>
 </div>
 </section>
 
-<section id="profilePage" class="hidden">
-<div class="panel">
+<!-- PROFILE -->
+<section id="profilePage" class="page hidden">
 <div class="profile-top">
-<img id="avatar" class="avatar" alt="Profile picture">
+<img id="avatar" class="profile-avatar" src="https://placehold.co/200x200?text=Profile">
 <div class="stats">
-<div><strong id="postCount">0</strong><span class="small">Posts</span></div>
-<div><strong id="followerCount">0</strong><span class="small">Followers</span></div>
-<div><strong id="followingCount">0</strong><span class="small">Following</span></div>
+<div><strong id="postCount">0</strong><span>Posts</span></div>
+<div><strong id="followerCount">0</strong><span>Followers</span></div>
+<div><strong id="followingCount">0</strong><span>Following</span></div>
 </div>
 </div>
+<div class="profile-details">
 <h3 id="profileName">Your name</h3>
 <p id="profileUsername" class="small">@username</p>
 <p id="profileBio">No bio yet.</p>
-<div class="profile-actions">
-<button id="editProfile" class="secondary">Edit Profile</button>
-<button id="avatarButton">Change Photo</button>
 </div>
-<div id="editBox" class="hidden">
-<h4>Edit your profile</h4>
+<div class="profile-buttons">
+<button class="secondary" id="editProfile">Edit profile</button>
+<button class="secondary" id="avatarButton">Change photo</button>
+</div>
+<div id="editBox" class="hidden" style="padding:15px">
 <input id="editName" placeholder="Full name">
 <input id="editUsername" placeholder="Username">
-<textarea id="editBio" placeholder="Write your bio"></textarea>
-<button id="saveProfile">Save Changes</button>
-<button id="cancelEdit" class="secondary">Cancel</button>
-<p id="editMessage" class="small"></p>
+<textarea id="editBio" placeholder="Your bio"></textarea>
+<button class="primary" id="saveProfile">Save changes</button>
+<button class="secondary" id="cancelEdit">Cancel</button>
+<p id="editMessage" class="message"></p>
 </div>
 <input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
-</div>
-<h3>Your photo gallery</h3>
+<div class="page-title" style="font-size:16px;border-top:1px solid #eee">Your posts</div>
 <div id="gallery" class="gallery"></div>
-<p id="galleryMessage" class="small"></p>
+<p id="galleryMessage" class="small" style="padding:15px"></p>
 </section>
+
 </section>
 </main>
 
+<!-- BOTTOM NAVIGATION -->
+<nav class="bottom-nav hidden" id="bottomNav">
+<button id="feedTab" class="active">⌂<span class="nav-label">Home</span></button>
+<button id="discoverTab">⌕<span class="nav-label">Search</span></button>
+<button id="createTab">＋<span class="nav-label">Create</span></button>
+<button id="profileTab">◉<span class="nav-label">Profile</span></button>
+</nav>
+
 <script type="module">
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {createClient} from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL="https://bcavalrihbazfcjyccsg.supabase.co";
 const SUPABASE_KEY="sb_publishable_7bJSW_IrTA1GalGR7E9Bzw_O2VzrAvQ";
 const db=createClient(SUPABASE_URL,SUPABASE_KEY);
-
 const $=id=>document.getElementById(id);
+
 let currentUser=null;
 let searchTimer=null;
+let currentPage="home";
 
 window.Telegram?.WebApp?.ready();
 window.Telegram?.WebApp?.expand();
 
-function msg(id,text){$(id).textContent=text;}
+function message(id,text){
+$(id).textContent=text;
+}
 
-function esc(value){
+function escapeHTML(value){
 return String(value??"").replace(/[&<>"']/g,c=>({
 "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
 })[c]);
@@ -169,7 +283,19 @@ function showAuth(){
 currentUser=null;
 $("auth").classList.remove("hidden");
 $("app").classList.add("hidden");
-$("logout").classList.add("hidden");
+$("bottomNav").classList.add("hidden");
+$("logoutBtn").classList.add("hidden");
+}
+
+function showPage(page){
+currentPage=page;
+["home","discover","create","profile"].forEach(name=>{
+$(name+"Page").classList.toggle("hidden",name!==page);
+$(name+"Tab")?.classList.toggle("active",name===page);
+});
+if(page==="home")loadFeed();
+if(page==="discover")loadSuggestions();
+if(page==="profile")loadProfile();
 }
 
 async function showApp(user){
@@ -177,35 +303,31 @@ if(!user)return;
 currentUser=user;
 $("auth").classList.add("hidden");
 $("app").classList.remove("hidden");
-$("logout").classList.remove("hidden");
+$("bottomNav").classList.remove("hidden");
+$("logoutBtn").classList.remove("hidden");
 showPage("home");
 await loadProfile();
-await loadFeed();
-}
-
-function showPage(page){
-["home","discover","profile"].forEach(name=>{
-$(name+"Page").classList.toggle("hidden",name!==page);
-$(name+"Tab").classList.toggle("active",name===page);
-});
-if(page==="profile")loadProfile();
-if(page==="discover")loadSuggestions();
 }
 
 $("feedTab").onclick=()=>showPage("home");
 $("discoverTab").onclick=()=>showPage("discover");
+$("createTab").onclick=()=>showPage("create");
 $("profileTab").onclick=()=>showPage("profile");
+$("refreshBtn").onclick=()=>{
+if(currentUser)showPage(currentPage);
+else location.reload();
+};
 
 $("showLogin").onclick=()=>{
 $("signup").classList.add("hidden");
 $("login").classList.remove("hidden");
-msg("authMessage","");
+message("authMessage","");
 };
 
 $("showSignup").onclick=()=>{
 $("login").classList.add("hidden");
 $("signup").classList.remove("hidden");
-msg("authMessage","");
+message("authMessage","");
 };
 
 $("register").onclick=async()=>{
@@ -216,28 +338,28 @@ const email=$("email").value.trim();
 const password=$("password").value;
 
 if(!fullname||!username||!email||password.length<6){
-msg("authMessage","Complete all fields. Password must be at least 6 characters.");
+message("authMessage","Complete all fields. Password must be at least 6 characters.");
 return;
 }
 
 button.disabled=true;
-msg("authMessage","Creating account...");
+message("authMessage","Creating your account...");
 
 try{
 const {data,error}=await db.auth.signUp({
 email,password,
 options:{data:{full_name:fullname,username}}
 });
-
 if(error)throw error;
 
 if(data.session){
-msg("authMessage","Account created! Opening your account...");
+message("authMessage","Account created successfully!");
+await showApp(data.user);
 }else{
-msg("authMessage","Registration submitted. Check your email if confirmation is required, then log in.");
+message("authMessage","Account submitted! Check your email for confirmation, then log in.");
 }
 }catch(error){
-msg("authMessage","Registration error: "+error.message);
+message("authMessage","Error: "+error.message);
 }finally{
 button.disabled=false;
 }
@@ -246,22 +368,23 @@ button.disabled=false;
 $("loginBtn").onclick=async()=>{
 const button=$("loginBtn");
 button.disabled=true;
-msg("authMessage","Logging in...");
+message("authMessage","Logging in...");
 
 try{
-const {error}=await db.auth.signInWithPassword({
+const {data,error}=await db.auth.signInWithPassword({
 email:$("loginEmail").value.trim(),
 password:$("loginPassword").value
 });
 if(error)throw error;
+await showApp(data.user);
 }catch(error){
-msg("authMessage",error.message);
+message("authMessage",error.message);
 }finally{
 button.disabled=false;
 }
 };
 
-$("logout").onclick=async()=>{
+$("logoutBtn").onclick=async()=>{
 await db.auth.signOut();
 showAuth();
 };
@@ -272,47 +395,57 @@ if(!currentUser)return;
 const {data,error}=await db.from("profiles")
 .select("*").eq("id",currentUser.id).maybeSingle();
 
-if(error)return msg("galleryMessage",error.message);
+if(error){
+message("galleryMessage",error.message);
+return;
+}
 
-const profile=data||{};
-$("avatar").src=profile.avatar_url||"https://placehold.co/200x200?text=Profile";
-$("profileName").textContent=profile.full_name||"Your name";
-$("profileUsername").textContent="@"+(profile.username||"username");
-$("profileBio").textContent=profile.bio||"No bio yet.";
-$("editName").value=profile.full_name||"";
-$("editUsername").value=profile.username||"";
-$("editBio").value=profile.bio||"";
+const p=data||{};
+const avatar=p.avatar_url||"https://placehold.co/200x200?text=Profile";
+$("avatar").src=avatar;
+$("myStoryAvatar").src=avatar;
+$("profileName").textContent=p.full_name||"Your name";
+$("profileUsername").textContent="@"+(p.username||"username");
+$("profileBio").textContent=p.bio||"No bio yet.";
+$("editName").value=p.full_name||"";
+$("editUsername").value=p.username||"";
+$("editBio").value=p.bio||"";
 
-const [{count:posts},{count:followers},{count:following}]=await Promise.all([
+const [posts,followers,following]=await Promise.all([
 db.from("posts").select("*",{count:"exact",head:true}).eq("user_id",currentUser.id),
 db.from("follows").select("*",{count:"exact",head:true}).eq("following_id",currentUser.id),
 db.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",currentUser.id)
 ]);
 
-$("postCount").textContent=posts??0;
-$("followerCount").textContent=followers??0;
-$("followingCount").textContent=following??0;
+$("postCount").textContent=posts.count??0;
+$("followerCount").textContent=followers.count??0;
+$("followingCount").textContent=following.count??0;
 await loadGallery();
 }
 
 async function loadGallery(){
 const gallery=$("gallery");
 gallery.innerHTML="";
-msg("galleryMessage","Loading photos...");
+message("galleryMessage","Loading posts...");
 
 const {data,error}=await db.from("posts")
 .select("image_url").eq("user_id",currentUser.id)
 .order("created_at",{ascending:false});
 
-if(error)return msg("galleryMessage",error.message);
-if(!data||data.length===0)
-return msg("galleryMessage","You haven't published any photos yet.");
+if(error){
+message("galleryMessage",error.message);
+return;
+}
+if(!data||data.length===0){
+message("galleryMessage","No posts yet. Share your first photo!");
+return;
+}
 
-msg("galleryMessage","");
+message("galleryMessage","");
 data.forEach(post=>{
 const img=document.createElement("img");
 img.src=post.image_url;
-img.alt="Your post";
+img.alt="Post";
 gallery.appendChild(img);
 });
 }
@@ -321,21 +454,24 @@ $("editProfile").onclick=()=>$("editBox").classList.remove("hidden");
 $("cancelEdit").onclick=()=>$("editBox").classList.add("hidden");
 
 $("saveProfile").onclick=async()=>{
-const name=$("editName").value.trim();
+const full_name=$("editName").value.trim();
 const username=$("editUsername").value.trim().replace(/^@/,"");
 const bio=$("editBio").value.trim();
 
-if(!name||!username)return msg("editMessage","Name and username are required.");
+if(!full_name||!username){
+message("editMessage","Name and username are required.");
+return;
+}
 
-msg("editMessage","Saving...");
+message("editMessage","Saving...");
+const {error}=await db.from("profiles")
+.update({full_name,username,bio}).eq("id",currentUser.id);
 
-const {error}=await db.from("profiles").update({
-full_name:name,username,bio
-}).eq("id",currentUser.id);
+if(error){
+message("editMessage",error.message);
+return;
+}
 
-if(error)return msg("editMessage",error.message);
-
-msg("editMessage","Profile updated!");
 $("editBox").classList.add("hidden");
 await loadProfile();
 };
@@ -348,83 +484,117 @@ if(!file)return;
 
 if(!["image/jpeg","image/png","image/webp"].includes(file.type))
 return alert("Choose JPG, PNG or WEBP.");
-
 if(file.size>5*1024*1024)
-return alert("Picture must be smaller than 5 MB.");
+return alert("Image must be smaller than 5 MB.");
 
 const ext=file.type.split("/")[1].replace("jpeg","jpg");
 const path=currentUser.id+"/avatar-"+Date.now()+"."+ext;
 
 const {error:uploadError}=await db.storage.from("media")
-.upload(path,file,{contentType:file.type});
+.upload(path,file,{contentType:file.type,upsert:true});
 
 if(uploadError)return alert(uploadError.message);
 
 const {data}=db.storage.from("media").getPublicUrl(path);
-
 const {error}=await db.from("profiles")
 .update({avatar_url:data.publicUrl}).eq("id",currentUser.id);
 
 if(error)return alert(error.message);
-
-alert("Profile picture updated!");
 await loadProfile();
+alert("Profile photo updated!");
 };
 
+// FEED
+
 async function loadFeed(){
+if(!currentUser)return;
 const feed=$("feed");
-feed.textContent="Loading posts...";
+feed.innerHTML='<div class="feed-empty">Loading posts...</div>';
 
 const {data:posts,error}=await db.from("posts")
 .select("id,user_id,image_url,caption,created_at")
 .order("created_at",{ascending:false}).limit(50);
 
-if(error)return feed.textContent=error.message;
-if(!posts||posts.length===0)
-return feed.textContent="No posts yet. Be the first to share!";
+if(error){
+feed.textContent=error.message;
+return;
+}
+if(!posts||posts.length===0){
+feed.innerHTML='<div class="feed-empty">No posts yet.<br>Be the first to share a photo!</div>';
+return;
+}
 
 const ids=[...new Set(posts.map(p=>p.user_id))];
 const postIds=posts.map(p=>p.id);
 
-const [{data:profiles},{data:likes}]=await Promise.all([
-db.from("profiles").select("id,username,full_name").in("id",ids),
+const [profilesResult,likesResult]=await Promise.all([
+db.from("profiles").select("id,username,full_name,avatar_url").in("id",ids),
 db.from("likes").select("post_id,user_id").in("post_id",postIds)
 ]);
 
-const profileMap={};
-(profiles||[]).forEach(p=>profileMap[p.id]=p);
+if(profilesResult.error||likesResult.error){
+feed.textContent=(profilesResult.error||likesResult.error).message;
+return;
+}
 
-const likeMap={};
-(likes||[]).forEach(l=>likeMap[l.post_id]=(likeMap[l.post_id]||0)+1);
+const profileMap={};
+(profilesResult.data||[]).forEach(p=>profileMap[p.id]=p);
+
+const likes=likesResult.data||[];
 
 feed.innerHTML=posts.map(post=>{
-const p=profileMap[post.user_id]||{};
-const name=p.username||p.full_name||"User";
-const liked=(likes||[]).some(l=>l.post_id===post.id&&l.user_id===currentUser.id);
+const profile=profileMap[post.user_id]||{};
+const username=profile.username||profile.full_name||"User";
+const avatar=profile.avatar_url||"https://placehold.co/100x100?text=User";
+const count=likes.filter(l=>l.post_id===post.id).length;
+const liked=likes.some(l=>l.post_id===post.id&&l.user_id===currentUser.id);
 
-return `<article class="post">
-<div class="post-head">${esc(name)}</div>
-<img src="${esc(post.image_url)}" alt="Post photo">
-<div class="post-actions">
-<button data-like="${esc(post.id)}">${liked?"♥ Liked":"♡ Like"}</button>
-<span>${likeMap[post.id]||0} likes</span>
+return `
+<article class="post">
+<div class="post-head">
+<img class="post-avatar" src="${escapeHTML(avatar)}" alt="">
+<div class="post-user">${escapeHTML(username)}</div>
 </div>
-<div class="caption">${esc(post.caption)}</div>
+<img class="post-photo" src="${escapeHTML(post.image_url)}" alt="Post photo">
+<div class="post-actions">
+<button class="action ${liked?"liked":""}" data-like="${escapeHTML(post.id)}">${liked?"♥":"♡"}</button>
+<button class="action" data-share="${escapeHTML(post.image_url)}">↗</button>
+</div>
+<div class="likes">${count} likes</div>
+<div class="post-caption">
+<strong>${escapeHTML(username)}</strong>${escapeHTML(post.caption||"")}
+<div class="post-date">${post.created_at?new Date(post.created_at).toLocaleDateString():""}</div>
+</div>
 </article>`;
 }).join("");
 }
 
 $("feed").addEventListener("click",async event=>{
-const button=event.target.closest("[data-like]");
-if(!button||!currentUser)return;
-button.disabled=true;
+const likeButton=event.target.closest("[data-like]");
+const shareButton=event.target.closest("[data-share]");
 
-const postId=button.dataset.like;
+if(shareButton){
+const url=shareButton.dataset.share;
+try{
+if(navigator.share)await navigator.share({title:"InstaGram Mini post",url});
+else await navigator.clipboard.writeText(url);
+}catch(e){}
+return;
+}
+
+if(!likeButton||!currentUser)return;
+likeButton.disabled=true;
+
+const postId=likeButton.dataset.like;
 const {data:existing,error:findError}=await db.from("likes")
 .select("post_id").eq("post_id",postId)
 .eq("user_id",currentUser.id).maybeSingle();
 
-if(findError){alert(findError.message);button.disabled=false;return;}
+if(findError){
+alert(findError.message);
+likeButton.disabled=false;
+return;
+}
 
 let error;
 if(existing){
@@ -440,19 +610,35 @@ if(error)alert(error.message);
 await loadFeed();
 });
 
+// CREATE POST
+
+$("photo").onchange=()=>{
+const file=$("photo").files[0];
+if(!file)return;
+if(!["image/jpeg","image/png","image/webp"].includes(file.type)){
+message("postMessage","Choose JPG, PNG or WEBP.");
+$("photo").value="";
+return;
+}
+if(file.size>5*1024*1024){
+message("postMessage","Photo must be smaller than 5 MB.");
+$("photo").value="";
+return;
+}
+$("preview").src=URL.createObjectURL(file);
+$("preview").classList.remove("hidden");
+message("postMessage","");
+};
+
 $("publish").onclick=async()=>{
 const file=$("photo").files[0];
 const caption=$("caption").value.trim();
 const button=$("publish");
 
-if(!file)return msg("postMessage","Choose a photo first.");
-if(!["image/jpeg","image/png","image/webp"].includes(file.type))
-return msg("postMessage","Choose JPG, PNG or WEBP.");
-if(file.size>5*1024*1024)
-return msg("postMessage","Photo must be smaller than 5 MB.");
+if(!file)return message("postMessage","Choose a photo first.");
 
 button.disabled=true;
-msg("postMessage","Uploading...");
+message("postMessage","Uploading your photo...");
 
 try{
 const ext=file.type.split("/")[1].replace("jpeg","jpg");
@@ -466,38 +652,44 @@ if(uploadError)throw uploadError;
 const {data:urlData}=db.storage.from("media").getPublicUrl(path);
 
 const {error}=await db.from("posts").insert({
-user_id:currentUser.id,image_url:urlData.publicUrl,caption
+user_id:currentUser.id,
+image_url:urlData.publicUrl,
+caption
 });
 
 if(error)throw error;
 
 $("photo").value="";
 $("caption").value="";
-msg("postMessage","Photo published!");
-await loadFeed();
-await loadProfile();
+$("preview").classList.add("hidden");
+message("postMessage","Your photo has been published!");
+showPage("home");
 }catch(error){
-msg("postMessage",error.message);
+message("postMessage",error.message);
 }finally{
 button.disabled=false;
 }
 };
 
-// DISCOVER
+// DISCOVER PEOPLE
 
 async function loadSuggestions(){
 const results=$("searchResults");
 results.textContent="Loading people...";
 
 const {data,error}=await db.from("profiles")
-.select("id,username,full_name,bio,avatar_url")
+.select("id,username,full_name,avatar_url")
 .neq("id",currentUser.id)
-.order("created_at",{ascending:false}).limit(20);
+.order("created_at",{ascending:false}).limit(30);
 
-if(error)return results.textContent=error.message;
-if(!data||data.length===0)
-return results.textContent="No other users yet. Invite friends to join!";
-
+if(error){
+results.textContent=error.message;
+return;
+}
+if(!data||data.length===0){
+results.textContent="No other users yet. Invite friends to join!";
+return;
+}
 await renderUsers(data);
 }
 
@@ -514,14 +706,18 @@ const results=$("searchResults");
 results.textContent="Searching...";
 
 const {data,error}=await db.from("profiles")
-.select("id,username,full_name,bio,avatar_url")
+.select("id,username,full_name,avatar_url")
 .neq("id",currentUser.id)
 .ilike("username","%"+term+"%").limit(30);
 
-if(error)return results.textContent=error.message;
-if(!data||data.length===0)
-return results.textContent="No users found.";
-
+if(error){
+results.textContent=error.message;
+return;
+}
+if(!data||data.length===0){
+results.textContent="No users found.";
+return;
+}
 await renderUsers(data);
 }
 
@@ -533,20 +729,24 @@ const {data:follows,error}=await db.from("follows")
 .select("following_id").eq("follower_id",currentUser.id)
 .in("following_id",ids);
 
-if(error)return results.textContent=error.message;
+if(error){
+results.textContent=error.message;
+return;
+}
 
 const following=new Set((follows||[]).map(f=>f.following_id));
 
 results.innerHTML=users.map(user=>{
 const isFollowing=following.has(user.id);
-return `<div class="user-result">
-<img src="${esc(user.avatar_url||"https://placehold.co/100x100?text=User")}" alt="">
+return `
+<div class="user-result">
+<img src="${escapeHTML(user.avatar_url||"https://placehold.co/100x100?text=User")}" alt="">
 <div class="user-info">
-<strong>${esc(user.username||"User")}</strong>
-<span class="small">${esc(user.full_name||"")}</span>
+<strong>${escapeHTML(user.username||"User")}</strong>
+<span>${escapeHTML(user.full_name||"")}</span>
 </div>
-<button class="${isFollowing?"following":""}"
-data-follow="${esc(user.id)}"
+<button class="follow-btn ${isFollowing?"following":""}"
+data-follow="${escapeHTML(user.id)}"
 data-following="${isFollowing}">
 ${isFollowing?"Following":"Follow"}
 </button>
@@ -587,21 +787,18 @@ await loadProfile();
 // AUTH SESSION
 
 db.auth.onAuthStateChange((event,session)=>{
-if(event==="SIGNED_IN"&&session?.user)showApp(session.user);
 if(event==="SIGNED_OUT")showAuth();
 });
 
 const {data,error}=await db.auth.getSession();
 
 if(error){
-msg("authMessage","Connection error: "+error.message);
+message("authMessage","Connection error: "+error.message);
 }else if(data.session?.user){
 await showApp(data.session.user);
 }else{
 showAuth();
 }
-
 </script>
 </body>
 </html>
-
