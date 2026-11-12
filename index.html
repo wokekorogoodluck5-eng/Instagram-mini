@@ -152,7 +152,10 @@ main{background:white;border-left:1px solid #eee;border-right:1px solid #eee}
 <input id="password" type="password" placeholder="Password (6 characters minimum)">
 <button class="primary" id="register">Create account</button>
 <p class="small">Already have an account?</p>
-<button class="link" id="showLogin">Log in instead</button>
+<button class="link" <button id="showLogin" class="link"
+onclick="document.getElementById('signup').classList.add('hidden');document.getElementById('login').classList.remove('hidden');">
+Log in instead
+</button>
 </div>
 
 <div id="login" class="hidden">
