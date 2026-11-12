@@ -1,188 +1,604 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>InstaGram Mini</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#fafafa;color:#111;font-family:Arial,sans-serif}
-header{background:white;padding:16px;border-bottom:1px solid #ddd;font-size:25px;font-weight:bold;font-family:cursive}
-.container{max-width:420px;margin:45px auto;padding:25px;background:white;border:1px solid #ddd;text-align:center}
-h2{font-family:cursive;font-size:30px}
-input{width:100%;padding:13px;margin:7px 0;border:1px solid #ddd;border-radius:5px;background:#fafafa}
-button{width:100%;padding:12px;margin-top:10px;background:#0095f6;color:white;border:0;border-radius:5px;font-weight:bold}
-.secondary{background:#333}
-.hidden{display:none}
-#message{font-size:13px;color:#d00;margin:12px}
-#profile{padding:25px;text-align:center}
-.avatar{width:90px;height:90px;border-radius:50%;object-fit:cover;background:#eee}
+body{margin:0;background:#fafafa;color:#222;font-family:Arial,sans-serif}
+header{background:white;border-bottom:1px solid #ddd;padding:14px;display:flex;justify-content:space-between;align-items:center}
+header h2{font-family:cursive;margin:0}
+main{max-width:520px;margin:auto;padding:12px}
+button,input,textarea{font:inherit}
+button{border:0;border-radius:7px;padding:11px;background:#0095f6;color:white;font-weight:bold;cursor:pointer}
+button:disabled{opacity:.6}
+input,textarea{width:100%;padding:11px;margin:6px 0;border:1px solid #ddd;border-radius:7px}
+.panel,.post{background:white;border:1px solid #ddd;border-radius:9px;margin-bottom:15px;padding:14px}
+.hidden{display:none!important}
+.small{font-size:13px;color:#777}
+.secondary{background:#555}
+.nav{display:flex;gap:6px;margin-bottom:15px}
+.nav button{flex:1;padding:10px 5px;font-size:13px}
+.nav button.active{background:#222}
+.profile-top{display:flex;align-items:center;gap:15px;margin:15px 0}
+.avatar{width:95px;height:95px;border-radius:50%;object-fit:cover;background:#eee;border:3px solid #e1306c}
+.stats{display:flex;justify-content:space-around;flex:1;text-align:center}
+.stats strong{display:block;font-size:19px}
+.profile-actions{display:flex;gap:8px;margin:15px 0}
+.profile-actions button{flex:1;font-size:13px}
+.post-head{padding:10px;font-weight:bold}
+.post img{width:100%;max-height:550px;object-fit:contain;background:#eee;display:block}
+.post-actions{padding:10px}
+.post-actions button{width:auto}
+.caption{padding:0 10px 12px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:3px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover}
+.user-result{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eee}
+.user-result img{width:48px;height:48px;border-radius:50%;object-fit:cover;background:#eee}
+.user-info{flex:1;min-width:0}
+.user-info strong{display:block;overflow-wrap:anywhere}
+.user-result button{min-width:85px;font-size:12px}
+.following{background:#555}
 </style>
 </head>
 <body>
-<header>InstaGram Mini</header>
 
-<div class="container" id="auth">
-  <h2>InstaGram Mini</h2>
-  <p>Sign up to see photos and videos from your friends.</p>
+<header>
+<h2>InstaGram Mini</h2>
+<button id="logout" class="secondary hidden">Log out</button>
+</header>
 
-  <input id="fullname" placeholder="Full name">
-  <input id="username" placeholder="Username">
-  <input id="email" type="email" placeholder="Email address">
-  <input id="password" type="password" placeholder="Password (minimum 6 characters)">
+<main>
+<div id="auth" class="panel">
+<h3>Welcome to InstaGram Mini</h3>
 
-  <button onclick="signup()">Create Account</button>
-  <button class="secondary" onclick="login()">Log In</button>
-  <div id="message"></div>
+<div id="signup">
+<h4>Create account</h4>
+<input id="fullname" placeholder="Full name">
+<input id="username" placeholder="Username">
+<input id="email" type="email" placeholder="Email address">
+<input id="password" type="password" placeholder="Password (6 characters minimum)">
+<button id="register">Create account</button>
+<p class="small">Already registered?</p>
+<button id="showLogin" class="secondary">Log in instead</button>
 </div>
 
-<div id="profile" class="hidden">
-  <img class="avatar" id="avatar" alt="Profile picture">
-  <h2 id="welcome">Welcome!</h2>
-  <p id="userhandle"></p>
-  <p>Your InstaGram Mini account is active.</p>
-  <button onclick="logout()">Log Out</button>
+<div id="login" class="hidden">
+<h4>Log in</h4>
+<input id="loginEmail" type="email" placeholder="Email address">
+<input id="loginPassword" type="password" placeholder="Password">
+<button id="loginBtn">Log in</button>
+<button id="showSignup" class="secondary">Create account</button>
 </div>
 
-<script>
-const SUPABASE_URL =
-'https://bcavalrihbazfcjyccsg.supabase.co';
+<p id="authMessage"></p>
+</div>
 
-const SUPABASE_KEY =
-'sb_publishable_7bJSW_IrTA1GalGR7E9Bzw_O2VzrAvQ';
+<section id="app" class="hidden">
+<div class="nav">
+<button id="feedTab" class="active">Home</button>
+<button id="discoverTab">Discover</button>
+<button id="profileTab">Profile</button>
+</div>
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+<section id="homePage">
+<div class="panel">
+<h3>Create a post</h3>
+<input id="photo" type="file" accept="image/jpeg,image/png,image/webp">
+<textarea id="caption" placeholder="Write a caption..."></textarea>
+<button id="publish">Share photo</button>
+<p id="postMessage" class="small"></p>
+</div>
+<h3>Explore posts</h3>
+<div id="feed">Loading posts...</div>
+</section>
 
-const $ = id => document.getElementById(id);
+<section id="discoverPage" class="hidden">
+<div class="panel">
+<h3>Discover People</h3>
+<input id="userSearch" placeholder="Search by username..." autocomplete="off">
+<p class="small">Find people and connect with them.</p>
+<div id="searchResults">Search for people by username.</div>
+</div>
+</section>
 
-function message(text) {
-  $('message').textContent = text;
-}
+<section id="profilePage" class="hidden">
+<div class="panel">
+<div class="profile-top">
+<img id="avatar" class="avatar" alt="Profile picture">
+<div class="stats">
+<div><strong id="postCount">0</strong><span class="small">Posts</span></div>
+<div><strong id="followerCount">0</strong><span class="small">Followers</span></div>
+<div><strong id="followingCount">0</strong><span class="small">Following</span></div>
+</div>
+</div>
+<h3 id="profileName">Your name</h3>
+<p id="profileUsername" class="small">@username</p>
+<p id="profileBio">No bio yet.</p>
+<div class="profile-actions">
+<button id="editProfile" class="secondary">Edit Profile</button>
+<button id="avatarButton">Change Photo</button>
+</div>
+<div id="editBox" class="hidden">
+<h4>Edit your profile</h4>
+<input id="editName" placeholder="Full name">
+<input id="editUsername" placeholder="Username">
+<textarea id="editBio" placeholder="Write your bio"></textarea>
+<button id="saveProfile">Save Changes</button>
+<button id="cancelEdit" class="secondary">Cancel</button>
+<p id="editMessage" class="small"></p>
+</div>
+<input id="avatarFile" type="file" accept="image/jpeg,image/png,image/webp" class="hidden">
+</div>
+<h3>Your photo gallery</h3>
+<div id="gallery" class="gallery"></div>
+<p id="galleryMessage" class="small"></p>
+</section>
+</section>
+</main>
 
-async function signup() {
-  const fullname = $('fullname').value.trim();
-  const username = $('username').value.trim().toLowerCase();
-  const email = $('email').value.trim();
-  const password = $('password').value;
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-  if (!fullname || !username || !email || !password) {
-    message('Please fill in all fields.');
-    return;
-  }
+const SUPABASE_URL="https://bcavalrihbazfcjyccsg.supabase.co";
+const SUPABASE_KEY="sb_publishable_7bJSW_IrTA1GalGR7E9Bzw_O2VzrAvQ";
+const db=createClient(SUPABASE_URL,SUPABASE_KEY);
 
-  if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
-    message('Username must be 3–20 characters.');
-    return;
-  }
-
-  if (password.length < 6) {
-    message('Password must have at least 6 characters.');
-    return;
-  }
-
-  message('Creating your account...');
-
-  const {data,error} = await db.auth.signUp({
-    email,
-    password,
-    options: {
-      data: {
-        username,
-        full_name: fullname
-      }
-    }
-  });
-
-  if (error) {
-    message(error.message);
-    return;
-  }
-
-  if (data.session) {
-    await showProfile(data.session.user);
-  } else {
-    message('Account created! Check your email to confirm, then log in.');
-  }
-}
-
-async function login() {
-  const email = $('email').value.trim();
-  const password = $('password').value;
-
-  if (!email || !password) {
-    message('Enter your email and password.');
-    return;
-  }
-
-  message('Logging in...');
-
-  const {data,error} = await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if (error) {
-    message(error.message);
-    return;
-  }
-
-  await showProfile(data.user);
-}
-
-async function showProfile(user) {
-  const {data:profile,error} = await db
-    .from('profiles')
-    .select('username, full_name, avatar_url')
-    .eq('id',user.id)
-    .single();
-
-  if (error) {
-    message('Logged in, but profile could not load: '+error.message);
-    return;
-  }
-
-  $('auth').classList.add('hidden');
-  $('profile').classList.remove('hidden');
-  $('welcome').textContent = profile.full_name || 'Welcome!';
-  $('userhandle').textContent = '@'+profile.username;
-
-  $('avatar').src = profile.avatar_url ||
-    'https://placehold.co/100x100?text=User';
-}
-
-async function logout() {
-  await db.auth.signOut();
-  $('profile').classList.add('hidden');
-  $('auth').classList.remove('hidden');
-  message('You have logged out.');
-}
-
-db.auth.onAuthStateChange((event,session) => {
-  if (event === 'SIGNED_IN' && session) {
-    setTimeout(() => showProfile(session.user),0);
-  }
-
-  if (event === 'SIGNED_OUT') {
-    $('profile').classList.add('hidden');
-    $('auth').classList.remove('hidden');
-  }
-});
-
-(async () => {
-  const {data} = await db.auth.getSession();
-  if (data.session) {
-    await showProfile(data.session.user);
-  }
-})();
+const $=id=>document.getElementById(id);
+let currentUser=null;
+let searchTimer=null;
 
 window.Telegram?.WebApp?.ready();
 window.Telegram?.WebApp?.expand();
+
+function msg(id,text){$(id).textContent=text;}
+
+function esc(value){
+return String(value??"").replace(/[&<>"']/g,c=>({
+"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+})[c]);
+}
+
+function showAuth(){
+currentUser=null;
+$("auth").classList.remove("hidden");
+$("app").classList.add("hidden");
+$("logout").classList.add("hidden");
+}
+
+async function showApp(user){
+if(!user)return;
+currentUser=user;
+$("auth").classList.add("hidden");
+$("app").classList.remove("hidden");
+$("logout").classList.remove("hidden");
+showPage("home");
+await loadProfile();
+await loadFeed();
+}
+
+function showPage(page){
+["home","discover","profile"].forEach(name=>{
+$(name+"Page").classList.toggle("hidden",name!==page);
+$(name+"Tab").classList.toggle("active",name===page);
+});
+if(page==="profile")loadProfile();
+if(page==="discover")loadSuggestions();
+}
+
+$("feedTab").onclick=()=>showPage("home");
+$("discoverTab").onclick=()=>showPage("discover");
+$("profileTab").onclick=()=>showPage("profile");
+
+$("showLogin").onclick=()=>{
+$("signup").classList.add("hidden");
+$("login").classList.remove("hidden");
+msg("authMessage","");
+};
+
+$("showSignup").onclick=()=>{
+$("login").classList.add("hidden");
+$("signup").classList.remove("hidden");
+msg("authMessage","");
+};
+
+$("register").onclick=async()=>{
+const button=$("register");
+const fullname=$("fullname").value.trim();
+const username=$("username").value.trim().replace(/^@/,"");
+const email=$("email").value.trim();
+const password=$("password").value;
+
+if(!fullname||!username||!email||password.length<6){
+msg("authMessage","Complete all fields. Password must be at least 6 characters.");
+return;
+}
+
+button.disabled=true;
+msg("authMessage","Creating account...");
+
+try{
+const {data,error}=await db.auth.signUp({
+email,password,
+options:{data:{full_name:fullname,username}}
+});
+
+if(error)throw error;
+
+if(data.session){
+msg("authMessage","Account created! Opening your account...");
+}else{
+msg("authMessage","Registration submitted. Check your email if confirmation is required, then log in.");
+}
+}catch(error){
+msg("authMessage","Registration error: "+error.message);
+}finally{
+button.disabled=false;
+}
+};
+
+$("loginBtn").onclick=async()=>{
+const button=$("loginBtn");
+button.disabled=true;
+msg("authMessage","Logging in...");
+
+try{
+const {error}=await db.auth.signInWithPassword({
+email:$("loginEmail").value.trim(),
+password:$("loginPassword").value
+});
+if(error)throw error;
+}catch(error){
+msg("authMessage",error.message);
+}finally{
+button.disabled=false;
+}
+};
+
+$("logout").onclick=async()=>{
+await db.auth.signOut();
+showAuth();
+};
+
+async function loadProfile(){
+if(!currentUser)return;
+
+const {data,error}=await db.from("profiles")
+.select("*").eq("id",currentUser.id).maybeSingle();
+
+if(error)return msg("galleryMessage",error.message);
+
+const profile=data||{};
+$("avatar").src=profile.avatar_url||"https://placehold.co/200x200?text=Profile";
+$("profileName").textContent=profile.full_name||"Your name";
+$("profileUsername").textContent="@"+(profile.username||"username");
+$("profileBio").textContent=profile.bio||"No bio yet.";
+$("editName").value=profile.full_name||"";
+$("editUsername").value=profile.username||"";
+$("editBio").value=profile.bio||"";
+
+const [{count:posts},{count:followers},{count:following}]=await Promise.all([
+db.from("posts").select("*",{count:"exact",head:true}).eq("user_id",currentUser.id),
+db.from("follows").select("*",{count:"exact",head:true}).eq("following_id",currentUser.id),
+db.from("follows").select("*",{count:"exact",head:true}).eq("follower_id",currentUser.id)
+]);
+
+$("postCount").textContent=posts??0;
+$("followerCount").textContent=followers??0;
+$("followingCount").textContent=following??0;
+await loadGallery();
+}
+
+async function loadGallery(){
+const gallery=$("gallery");
+gallery.innerHTML="";
+msg("galleryMessage","Loading photos...");
+
+const {data,error}=await db.from("posts")
+.select("image_url").eq("user_id",currentUser.id)
+.order("created_at",{ascending:false});
+
+if(error)return msg("galleryMessage",error.message);
+if(!data||data.length===0)
+return msg("galleryMessage","You haven't published any photos yet.");
+
+msg("galleryMessage","");
+data.forEach(post=>{
+const img=document.createElement("img");
+img.src=post.image_url;
+img.alt="Your post";
+gallery.appendChild(img);
+});
+}
+
+$("editProfile").onclick=()=>$("editBox").classList.remove("hidden");
+$("cancelEdit").onclick=()=>$("editBox").classList.add("hidden");
+
+$("saveProfile").onclick=async()=>{
+const name=$("editName").value.trim();
+const username=$("editUsername").value.trim().replace(/^@/,"");
+const bio=$("editBio").value.trim();
+
+if(!name||!username)return msg("editMessage","Name and username are required.");
+
+msg("editMessage","Saving...");
+
+const {error}=await db.from("profiles").update({
+full_name:name,username,bio
+}).eq("id",currentUser.id);
+
+if(error)return msg("editMessage",error.message);
+
+msg("editMessage","Profile updated!");
+$("editBox").classList.add("hidden");
+await loadProfile();
+};
+
+$("avatarButton").onclick=()=>$("avatarFile").click();
+
+$("avatarFile").onchange=async()=>{
+const file=$("avatarFile").files[0];
+if(!file)return;
+
+if(!["image/jpeg","image/png","image/webp"].includes(file.type))
+return alert("Choose JPG, PNG or WEBP.");
+
+if(file.size>5*1024*1024)
+return alert("Picture must be smaller than 5 MB.");
+
+const ext=file.type.split("/")[1].replace("jpeg","jpg");
+const path=currentUser.id+"/avatar-"+Date.now()+"."+ext;
+
+const {error:uploadError}=await db.storage.from("media")
+.upload(path,file,{contentType:file.type});
+
+if(uploadError)return alert(uploadError.message);
+
+const {data}=db.storage.from("media").getPublicUrl(path);
+
+const {error}=await db.from("profiles")
+.update({avatar_url:data.publicUrl}).eq("id",currentUser.id);
+
+if(error)return alert(error.message);
+
+alert("Profile picture updated!");
+await loadProfile();
+};
+
+async function loadFeed(){
+const feed=$("feed");
+feed.textContent="Loading posts...";
+
+const {data:posts,error}=await db.from("posts")
+.select("id,user_id,image_url,caption,created_at")
+.order("created_at",{ascending:false}).limit(50);
+
+if(error)return feed.textContent=error.message;
+if(!posts||posts.length===0)
+return feed.textContent="No posts yet. Be the first to share!";
+
+const ids=[...new Set(posts.map(p=>p.user_id))];
+const postIds=posts.map(p=>p.id);
+
+const [{data:profiles},{data:likes}]=await Promise.all([
+db.from("profiles").select("id,username,full_name").in("id",ids),
+db.from("likes").select("post_id,user_id").in("post_id",postIds)
+]);
+
+const profileMap={};
+(profiles||[]).forEach(p=>profileMap[p.id]=p);
+
+const likeMap={};
+(likes||[]).forEach(l=>likeMap[l.post_id]=(likeMap[l.post_id]||0)+1);
+
+feed.innerHTML=posts.map(post=>{
+const p=profileMap[post.user_id]||{};
+const name=p.username||p.full_name||"User";
+const liked=(likes||[]).some(l=>l.post_id===post.id&&l.user_id===currentUser.id);
+
+return `<article class="post">
+<div class="post-head">${esc(name)}</div>
+<img src="${esc(post.image_url)}" alt="Post photo">
+<div class="post-actions">
+<button data-like="${esc(post.id)}">${liked?"♥ Liked":"♡ Like"}</button>
+<span>${likeMap[post.id]||0} likes</span>
+</div>
+<div class="caption">${esc(post.caption)}</div>
+</article>`;
+}).join("");
+}
+
+$("feed").addEventListener("click",async event=>{
+const button=event.target.closest("[data-like]");
+if(!button||!currentUser)return;
+button.disabled=true;
+
+const postId=button.dataset.like;
+const {data:existing,error:findError}=await db.from("likes")
+.select("post_id").eq("post_id",postId)
+.eq("user_id",currentUser.id).maybeSingle();
+
+if(findError){alert(findError.message);button.disabled=false;return;}
+
+let error;
+if(existing){
+({error}=await db.from("likes").delete()
+.eq("post_id",postId).eq("user_id",currentUser.id));
+}else{
+({error}=await db.from("likes").insert({
+post_id:postId,user_id:currentUser.id
+}));
+}
+
+if(error)alert(error.message);
+await loadFeed();
+});
+
+$("publish").onclick=async()=>{
+const file=$("photo").files[0];
+const caption=$("caption").value.trim();
+const button=$("publish");
+
+if(!file)return msg("postMessage","Choose a photo first.");
+if(!["image/jpeg","image/png","image/webp"].includes(file.type))
+return msg("postMessage","Choose JPG, PNG or WEBP.");
+if(file.size>5*1024*1024)
+return msg("postMessage","Photo must be smaller than 5 MB.");
+
+button.disabled=true;
+msg("postMessage","Uploading...");
+
+try{
+const ext=file.type.split("/")[1].replace("jpeg","jpg");
+const path=currentUser.id+"/"+Date.now()+"."+ext;
+
+const {error:uploadError}=await db.storage.from("media")
+.upload(path,file,{contentType:file.type});
+
+if(uploadError)throw uploadError;
+
+const {data:urlData}=db.storage.from("media").getPublicUrl(path);
+
+const {error}=await db.from("posts").insert({
+user_id:currentUser.id,image_url:urlData.publicUrl,caption
+});
+
+if(error)throw error;
+
+$("photo").value="";
+$("caption").value="";
+msg("postMessage","Photo published!");
+await loadFeed();
+await loadProfile();
+}catch(error){
+msg("postMessage",error.message);
+}finally{
+button.disabled=false;
+}
+};
+
+// DISCOVER
+
+async function loadSuggestions(){
+const results=$("searchResults");
+results.textContent="Loading people...";
+
+const {data,error}=await db.from("profiles")
+.select("id,username,full_name,bio,avatar_url")
+.neq("id",currentUser.id)
+.order("created_at",{ascending:false}).limit(20);
+
+if(error)return results.textContent=error.message;
+if(!data||data.length===0)
+return results.textContent="No other users yet. Invite friends to join!";
+
+await renderUsers(data);
+}
+
+$("userSearch").addEventListener("input",()=>{
+clearTimeout(searchTimer);
+searchTimer=setTimeout(searchUsers,350);
+});
+
+async function searchUsers(){
+const term=$("userSearch").value.trim().replace(/^@/,"");
+if(!term)return loadSuggestions();
+
+const results=$("searchResults");
+results.textContent="Searching...";
+
+const {data,error}=await db.from("profiles")
+.select("id,username,full_name,bio,avatar_url")
+.neq("id",currentUser.id)
+.ilike("username","%"+term+"%").limit(30);
+
+if(error)return results.textContent=error.message;
+if(!data||data.length===0)
+return results.textContent="No users found.";
+
+await renderUsers(data);
+}
+
+async function renderUsers(users){
+const results=$("searchResults");
+const ids=users.map(u=>u.id);
+
+const {data:follows,error}=await db.from("follows")
+.select("following_id").eq("follower_id",currentUser.id)
+.in("following_id",ids);
+
+if(error)return results.textContent=error.message;
+
+const following=new Set((follows||[]).map(f=>f.following_id));
+
+results.innerHTML=users.map(user=>{
+const isFollowing=following.has(user.id);
+return `<div class="user-result">
+<img src="${esc(user.avatar_url||"https://placehold.co/100x100?text=User")}" alt="">
+<div class="user-info">
+<strong>${esc(user.username||"User")}</strong>
+<span class="small">${esc(user.full_name||"")}</span>
+</div>
+<button class="${isFollowing?"following":""}"
+data-follow="${esc(user.id)}"
+data-following="${isFollowing}">
+${isFollowing?"Following":"Follow"}
+</button>
+</div>`;
+}).join("");
+}
+
+$("searchResults").addEventListener("click",async event=>{
+const button=event.target.closest("[data-follow]");
+if(!button||!currentUser)return;
+
+const targetId=button.dataset.follow;
+const isFollowing=button.dataset.following==="true";
+button.disabled=true;
+
+let error;
+if(isFollowing){
+({error}=await db.from("follows").delete()
+.eq("follower_id",currentUser.id).eq("following_id",targetId));
+}else{
+({error}=await db.from("follows").insert({
+follower_id:currentUser.id,following_id:targetId
+}));
+}
+
+if(error){
+alert(error.message);
+button.disabled=false;
+return;
+}
+
+if($("userSearch").value.trim())await searchUsers();
+else await loadSuggestions();
+
+await loadProfile();
+});
+
+// AUTH SESSION
+
+db.auth.onAuthStateChange((event,session)=>{
+if(event==="SIGNED_IN"&&session?.user)showApp(session.user);
+if(event==="SIGNED_OUT")showAuth();
+});
+
+const {data,error}=await db.auth.getSession();
+
+if(error){
+msg("authMessage","Connection error: "+error.message);
+}else if(data.session?.user){
+await showApp(data.session.user);
+}else{
+showAuth();
+}
+
 </script>
 </body>
 </html>
+
