@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>InstaGram Mini</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <style>
 *{box-sizing:border-box}
 body{margin:0;background:#fff;color:#262626;font-family:Arial,sans-serif}
@@ -130,7 +131,7 @@ nav button{background:white;font-size:22px;padding:8px}
 <script>
 const SUPABASE_URL="https://bcavalrihbazfcjyccsg.supabase.co";
 const SUPABASE_KEY="sb_publishable_7bJSW_IrTA1GalGR7E9Bzw_O2VzrAvQ";
-
+const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let currentUser=null;
 
 function showLogin(){
@@ -148,12 +149,81 @@ document.getElementById(name).classList.add("active");
 function message(text){
 document.getElementById("authMessage").textContent=text;
 }
+
 async function register(){
-message("Connecting...");
+  const email=document.getElementById("signupEmail").value.trim();
+  const password=document.getElementById("signupPassword").value;
+  const username=document.getElementById("signupUsername").value.trim();
+
+  if(!email || !password || !username){
+    message("Please complete all fields.");
+    return;
+  }
+
+  if(password.length<6){
+    message("Password must be at least 6 characters.");
+    return;
+  }
+
+  message("Creating your account...");
+
+  try{
+    const {data,error}=await db.auth.signUp({
+      email,
+      password,
+      options:{
+        data:{username:username}
+      }
+    });
+
+    if(error) throw error;
+
+    if(data.session){
+      currentUser=data.user;
+      document.getElementById("profileUsername").textContent=username;
+      document.getElementById("bottomNav").classList.remove("hidden");
+      openPage("home");
+      message("");
+    }else{
+      message("Account created! Check your email to confirm your account, then log in.");
+      showLogin();
+    }
+  }catch(error){
+    message(error.message);
+  }
 }
+
 async function loginUser(){
-message("Connecting...");
+  const email=document.getElementById("loginEmail").value.trim();
+  const password=document.getElementById("loginPassword").value;
+
+  if(!email || !password){
+    message("Enter your email and password.");
+    return;
+  }
+
+  message("Logging in...");
+
+  try{
+    const {data,error}=await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error) throw error;
+
+    currentUser=data.user;
+    document.getElementById("profileUsername").textContent=
+      data.user.user_metadata.username || data.user.email;
+
+    document.getElementById("bottomNav").classList.remove("hidden");
+    openPage("home");
+    message("");
+  }catch(error){
+    message(error.message);
+  }
 }
+
 function logoutUser(){
 currentUser=null;
 document.getElementById("bottomNav").classList.add("hidden");
